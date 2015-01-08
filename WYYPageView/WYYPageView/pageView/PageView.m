@@ -119,6 +119,7 @@
     
     
     if (self.leftViewState == hidden && nowPt.x-firstPt.x>0) {
+        
         float allXMove = nowPt.x-firstPt.x>leftViewWidth?leftViewWidth:nowPt.x-firstPt.x;
         
         if (![self.coverView superview]) {
@@ -127,8 +128,10 @@
 
         self.leftView.frame = CGRectMake(self.leftView.frame.origin.x+nowPt.x-prePt.x>0?0:self.leftView.frame.origin.x+nowPt.x-prePt.x, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
         self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(allXMove/leftViewWidth)];
-        prePt = nowPt;
         
+        if(nowPt.x-firstPt.x<=leftViewWidth){
+            prePt = nowPt;
+        }
         
         if (gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateEnded) {
             
@@ -173,12 +176,17 @@
     }
     
     if (self.leftViewState == show && nowPt.x-firstPt.x<0) {
+        
         float allXMove = firstPt.x-nowPt.x>leftViewWidth?leftViewWidth:firstPt.x-nowPt.x;
         
         self.leftView.frame = CGRectMake(self.leftView.frame.origin.x+nowPt.x-prePt.x<-leftViewWidth?-leftViewWidth:self.leftView.frame.origin.x+nowPt.x-prePt.x, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
         self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(1-allXMove/leftViewWidth)];
-        NSLog(@"leftView的x:%f",self.leftView.frame.origin.x);
-        prePt = nowPt;
+        
+//        NSLog(@"leftView的x:%f",self.leftView.frame.origin.x);
+        
+        if (firstPt.x-nowPt.x<=leftViewWidth) {
+            prePt = nowPt;
+        }
         
         if (gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateEnded) {
             
