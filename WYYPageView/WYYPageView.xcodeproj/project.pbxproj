@@ -15,6 +15,7 @@
 		750FAB351A567D0900B4CAA8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 750FAB331A567D0900B4CAA8 /* LaunchScreen.xib */; };
 		750FAB4D1A567EDD00B4CAA8 /* PageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 750FAB4C1A567EDD00B4CAA8 /* PageView.m */; };
 		750FAB501A567F1A00B4CAA8 /* ContentScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 750FAB4F1A567F1A00B4CAA8 /* ContentScrollView.m */; };
+		758230181A5FA2820002379E /* PageOneContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 758230171A5FA2820002379E /* PageOneContentView.m */; };
 		75D3E12B1A5CD023002A0248 /* MyApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D3E12A1A5CD023002A0248 /* MyApplication.m */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,8 @@
 		750FAB4C1A567EDD00B4CAA8 /* PageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageView.m; sourceTree = "<group>"; };
 		750FAB4E1A567F1A00B4CAA8 /* ContentScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentScrollView.h; sourceTree = "<group>"; };
 		750FAB4F1A567F1A00B4CAA8 /* ContentScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentScrollView.m; sourceTree = "<group>"; };
+		758230161A5FA2820002379E /* PageOneContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOneContentView.h; sourceTree = "<group>"; };
+		758230171A5FA2820002379E /* PageOneContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageOneContentView.m; sourceTree = "<group>"; };
 		75D3E1291A5CD023002A0248 /* MyApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyApplication.h; sourceTree = "<group>"; };
 		75D3E12A1A5CD023002A0248 /* MyApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyApplication.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,6 +75,8 @@
 				750FAB261A567D0900B4CAA8 /* AppDelegate.m */,
 				750FAB2B1A567D0900B4CAA8 /* ViewController.h */,
 				750FAB2C1A567D0900B4CAA8 /* ViewController.m */,
+				758230161A5FA2820002379E /* PageOneContentView.h */,
+				758230171A5FA2820002379E /* PageOneContentView.m */,
 				750FAB311A567D0900B4CAA8 /* Images.xcassets */,
 				750FAB331A567D0900B4CAA8 /* LaunchScreen.xib */,
 				750FAB281A567D0900B4CAA8 /* WYYPageView.xcdatamodeld */,
@@ -175,6 +180,7 @@
 				750FAB501A567F1A00B4CAA8 /* ContentScrollView.m in Sources */,
 				750FAB2A1A567D0900B4CAA8 /* WYYPageView.xcdatamodeld in Sources */,
 				75D3E12B1A5CD023002A0248 /* MyApplication.m in Sources */,
+				758230181A5FA2820002379E /* PageOneContentView.m in Sources */,
 				750FAB271A567D0900B4CAA8 /* AppDelegate.m in Sources */,
 				750FAB2D1A567D0900B4CAA8 /* ViewController.m in Sources */,
 				750FAB241A567D0900B4CAA8 /* main.m in Sources */,
@@ -276,8 +282,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = WYYPageView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos8.1;
 			};
 			name = Debug;
 		};
@@ -286,8 +294,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = WYYPageView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos8.1;
 			};
 			name = Release;
 		};

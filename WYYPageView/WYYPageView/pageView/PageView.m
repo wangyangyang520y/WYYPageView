@@ -7,6 +7,7 @@
 //
 
 #import "PageView.h"
+#import "AppDelegate.h"
 
 
 
@@ -17,25 +18,25 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self initPt];
-        [self initState];
         self.backgroundColor = [UIColor whiteColor];
         
-        self.pageMenueView = [[ContentScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, pageMenueHeight)];
+        [self initNavigationView];
+        
+        self.pageMenueView = [[ContentScrollView alloc] initWithFrame:CGRectMake(0, self.navigationView.frame.origin.y+self.navigationView.frame.size.height, frame.size.width, pageMenueHeight)];
         [self addSubview:self.pageMenueView];
         self.pageMenueView.delegate = self;
         [self.pageMenueView setShowsHorizontalScrollIndicator:NO];
         [self.pageMenueView setShowsVerticalScrollIndicator:YES];
         
-        self.pageContentScrollView = [[ContentScrollView alloc] initWithFrame:CGRectMake(0, pageMenueHeight, frame.size.width, frame.size.height-self.pageMenueView.frame.size.height)];
+        self.pageContentScrollView = [[ContentScrollView alloc] initWithFrame:CGRectMake(0, self.pageMenueView.frame.origin.y+self.pageMenueView.frame.size.height, frame.size.width, frame.size.height-self.pageMenueView.frame.size.height)];
         [self addSubview:self.pageContentScrollView];
         self.pageContentScrollView.delegate = self;
         [self.pageContentScrollView setShowsHorizontalScrollIndicator:NO];
         [self.pageContentScrollView setShowsVerticalScrollIndicator:NO];
-        [self.pageContentScrollView setBounces:YES];
+        [self.pageContentScrollView setBounces:NO];
         self.pageContentScrollView.pagingEnabled = YES;
 
-        self.lineView = [[UIView alloc] initWithFrame:CGRectMake(0, pageMenueHeight-0.5, frame.size.width, 0.5)];
+        self.lineView = [[UIView alloc] initWithFrame:CGRectMake(0, self.pageMenueView.frame.origin.y+self.pageMenueView.frame.size.height-0.5, frame.size.width, 0.5)];
         self.lineView.backgroundColor = [UIColor colorWithRed:171/255.0 green:171/255.0 blue:171/255.0 alpha:1.0];
         [self addSubview:self.lineView];
         
@@ -51,14 +52,14 @@
         
         
         
-        leftViewSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipe:)];
-        [leftViewSwipe setDirection:UISwipeGestureRecognizerDirectionRight];
+//        leftViewSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(leftSwipe:)];
+//        [leftViewSwipe setDirection:UISwipeGestureRecognizerDirectionRight];
         
-        leftViewPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(leftPan:)];
+        leftViewPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(nLeftPan:)];
         
-        [leftViewPan requireGestureRecognizerToFail:leftViewSwipe];
+//        [leftViewPan requireGestureRecognizerToFail:leftViewSwipe];
         
-        [self addGestureRecognizer:leftViewSwipe];
+//        [self addGestureRecognizer:leftViewSwipe];
         [self addGestureRecognizer:leftViewPan];
         
         
@@ -67,9 +68,43 @@
         tap.numberOfTapsRequired =1;
         tap.numberOfTouchesRequired = 1;
         [self.coverView addGestureRecognizer:tap];
+        
+        
+        
+        [self initPt];
+        [self initState];
     
     }
     return self;
+}
+
+-(void)initNavigationView
+{
+    AppDelegate *app = [UIApplication sharedApplication].delegate;
+    float navHeight = app.navController.navigationBar.frame.size.height;
+    float statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    NSLog(@"navHeight :------%f",navHeight);
+    self.navigationView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, navHeight+statusBarHeight)];
+    self.navigationView.backgroundColor = [UIColor redColor];
+    [self addSubview:self.navigationView];
+    
+    self.navigationTitle = [[UILabel alloc] init];
+    self.navigationTitle.text = @"仿网易客户端";
+    [self.navigationTitle setTextAlignment:NSTextAlignmentCenter];
+    [self.navigationTitle setTextColor:[UIColor whiteColor]];
+    [self.navigationTitle setFont:[UIFont systemFontOfSize:20]];
+    self.navigationTitle.frame = CGRectMake(0, 0, 200, 30);
+    self.navigationTitle.center = CGPointMake(self.navigationView.center.x, self.navigationView.center.y+10);
+    [self.navigationView addSubview:self.navigationTitle];
+    
+    UIButton *btn = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 25, 25)];
+    [btn setTitle:@"lt" forState:UIControlStateNormal];
+    btn.layer.borderWidth = 1;
+    btn.layer.borderColor = [[UIColor whiteColor] CGColor];
+    btn.layer.cornerRadius = 10;
+    btn.center = CGPointMake(25, self.navigationView.center.y+10);
+    [btn addTarget:self action:@selector(leftBtnAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationView addSubview:btn];
 }
 
 -(void)initPt
@@ -77,6 +112,7 @@
     firstPt = CGPointZero;
     prePt = CGPointZero;
     nowPt = CGPointZero;
+    isIntercept = YES;
 }
 
 -(void)initState
@@ -84,27 +120,183 @@
     self.leftViewState = hidden;
 }
 
-
--(void)leftSwipe:(UISwipeGestureRecognizer *)gesture
+-(void)leftBtnAction:(UIButton *)sender
 {
     if (self.leftViewState!=hidden) {
         return;
     }
-    NSLog(@"gesture state:%ld",gesture.state);
-    if (gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateEnded ) {
+    if(![self.coverView superview]){
         [self insertSubview:self.coverView belowSubview:self.leftView];
-        [UIView animateWithDuration:animationDuration animations:^{
-            self.leftView.frame = CGRectMake(0, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
-            self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha];
-        } completion:^(BOOL finished) {
-            self.leftViewState = show;
-        }];
+    }
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.leftView.frame = CGRectMake(0, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+        self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha];
+    } completion:^(BOOL finished) {
+        self.leftViewState = show;
+    }];
+    
+}
+
+//-(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+//{
+//    hitEvent = event;
+//    hitPt = point;
+//    if (isIntercept) {
+//        return self;
+//    }else{
+//        return [super hitTest:point withEvent:event];
+//    }
+//}
+//-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    NSLog(@"touchbegan------");
+//}
+
+//-(void)leftSwipe:(UISwipeGestureRecognizer *)gesture
+//{
+//    if (self.leftViewState!=hidden) {
+//        return;
+//    }
+//
+//    if (gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateEnded ) {
+//        [self insertSubview:self.coverView belowSubview:self.leftView];
+//        [UIView animateWithDuration:animationDuration animations:^{
+//            self.leftView.frame = CGRectMake(0, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+//            self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha];
+//        } completion:^(BOOL finished) {
+//            self.leftViewState = show;
+//        }];
+//    }
+//    
+//}
+
+
+-(void)nLeftPan:(UIPanGestureRecognizer *)gesture
+{
+    
+    float v_x = [gesture velocityInView:gesture.view].x;
+    if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStatePossible) {
+        [self initPt];
+    }
+    nowPt = [gesture locationInView:gesture.view];
+    if (firstPt.x == CGPointZero.x && firstPt.y == CGPointZero.y) {
+        firstPt = nowPt;
+        prePt = nowPt;
+    }
+
+    
+    if (self.leftViewState==hidden && nowPt.x-firstPt.x>0) {
+        self.leftViewState = h_middle;
+    }
+    if (self.leftViewState ==show && nowPt.x - firstPt.x < 0) {
+        self.leftViewState = s_middle;
+    }
+    
+    float newX;
+    
+    if (self.leftView.frame.origin.x+nowPt.x-prePt.x<-leftViewWidth) {
+        newX = -leftViewWidth;
+    }else if (self.leftView.frame.origin.x+nowPt.x-prePt.x>0){
+        newX = 0;
+    }else{
+        newX = self.leftView.frame.origin.x+nowPt.x-prePt.x;
+    }
+    
+    if (![self.coverView superview]) {
+        [self insertSubview:self.coverView belowSubview:self.leftView];
+    }
+    
+    if ((self.leftViewState == hidden || self.leftViewState ==h_middle) ) {
+        
+        float allXMove = nowPt.x-firstPt.x>leftViewWidth?leftViewWidth:nowPt.x-firstPt.x;
+    
+        self.leftView.frame = CGRectMake(newX, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+        self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(allXMove/leftViewWidth)];
+        
+        if(nowPt.x-firstPt.x<=leftViewWidth){
+            prePt = nowPt;
+        }
+    }
+    
+    if ((self.leftViewState == show ||self.leftViewState == s_middle)) {
+        
+        float allXMove = firstPt.x-nowPt.x>leftViewWidth?leftViewWidth:firstPt.x-nowPt.x;
+        
+        self.leftView.frame = CGRectMake(newX, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+        self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(1-allXMove/leftViewWidth)];
+        
+        if (firstPt.x-nowPt.x<=leftViewWidth) {
+            prePt = nowPt;
+        }
+    }
+    
+    if (gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateEnded) {
+        
+            if (self.leftViewState == h_middle && nowPt.x-firstPt.x<0) {
+                if ([self.coverView superview]) {
+                    [self.coverView removeFromSuperview];
+                }
+                self.leftViewState = hidden;
+                return;
+            }
+        
+        if (fabsf(v_x)>1000) {
+            
+            CGPoint v = [gesture velocityInView:gesture.view];
+            float magnitude = sqrtf(v.x*v.x + v.y*v.y);
+//            float slideMult = magnitude / 1000;
+//            NSLog(@"magnitude: %f, slideMult: %f", magnitude, slideMult);
+            NSLog(@"magnitude: %f", magnitude);
+            float duration;
+            if(v_x > 0){
+                duration  = fabsf(self.leftView.frame.origin.x)/(magnitude/2);
+            }
+            
+            if (duration<0) {
+                duration = (self.leftView.frame.origin.x+leftViewWidth)/(magnitude/2);
+            }
+            
+            NSLog(@"duration: %f", duration);
+            
+            [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                self.leftView.frame = CGRectMake(v_x>0?0:-leftViewWidth, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+                self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:v_x>0?coverAlpha:0];
+            } completion:^(BOOL finished) {
+                self.leftViewState = v_x>0?show:hidden;
+            }];
+
+        }else{
+            float x = self.leftView.frame.origin.x;
+            if (x<-leftViewWidth/2) {
+                [UIView animateWithDuration:animationDuration/2 animations:^{
+                    self.leftView.frame = CGRectMake(-leftViewWidth, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+                    self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+                } completion:^(BOOL finished) {
+                    [self.coverView removeFromSuperview];
+                    self.leftViewState = hidden;
+                }];
+            }else{
+                [UIView animateWithDuration:animationDuration/2 animations:^{
+                    self.leftView.frame = CGRectMake(0, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
+                    self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha];
+                } completion:^(BOOL finished) {
+                    self.leftViewState = show;
+                }];
+            }
+        }
+        
     }
     
 }
 
 -(void)leftPan:(UIPanGestureRecognizer *)gesture
 {
+    if (self.leftViewState==hidden) {
+        self.leftViewState = h_middle;
+    }
+    if (self.leftViewState ==show) {
+        self.leftViewState = s_middle;
+    }
     float v_x = [gesture velocityInView:gesture.view].x;
 //    NSLog(@"pan的速度：%f",fabsf(v_x) );
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStatePossible) {
@@ -118,7 +310,7 @@
     }
     
     
-    if (self.leftViewState == hidden && nowPt.x-firstPt.x>0) {
+    if ((self.leftViewState == hidden || self.leftViewState ==h_middle) && nowPt.x-firstPt.x>0) {
         
         float allXMove = nowPt.x-firstPt.x>leftViewWidth?leftViewWidth:nowPt.x-firstPt.x;
         
@@ -175,7 +367,7 @@
         }
     }
     
-    if (self.leftViewState == show && nowPt.x-firstPt.x<0) {
+    if ((self.leftViewState == show ||self.leftViewState == s_middle)&& nowPt.x-firstPt.x<0) {
         
         float allXMove = firstPt.x-nowPt.x>leftViewWidth?leftViewWidth:firstPt.x-nowPt.x;
         
@@ -238,7 +430,7 @@
 
 -(void)leftTap:(UITapGestureRecognizer *)gesture
 {
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:animationDuration animations:^{
         self.leftView.frame = CGRectMake(-self.leftView.frame.size.width, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
         self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
     } completion:^(BOOL finished) {
@@ -457,11 +649,17 @@
     if (leftViewState==hidden) {
         _leftViewState = leftViewState;
         self.pageContentScrollView.scrollEnabled = YES;
+        [self.coverView removeFromSuperview];
+    }
+    if (leftViewState == h_middle || leftViewState == s_middle) {
+        _leftViewState = leftViewState;
+        self.pageContentScrollView.scrollEnabled = NO;
     }
     if (leftViewState == show) {
         _leftViewState = leftViewState;
         self.pageContentScrollView.scrollEnabled = NO;
     }
+    NSLog(@"scrollview status:%d",self.pageContentScrollView.scrollEnabled);
 }
 
 
@@ -528,13 +726,10 @@
 {
     if (index==0) {
         [self.pageContentScrollView setPageLocation:firstLocation];
-        self.pageContentScrollView.bounces = NO;
     }else if(index == self.pageContents.count-1){
         [self.pageContentScrollView setPageLocation:lastLocation];
-        self.pageContentScrollView.bounces = NO;
     }else{
         [self.pageContentScrollView setPageLocation:noneLocation];
-        self.pageContentScrollView.bounces = YES;
     }
 }
 

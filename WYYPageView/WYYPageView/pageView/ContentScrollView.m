@@ -12,6 +12,30 @@
 
 @implementation ContentScrollView
 
+-(instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        
+    }
+    return self;
+}
+
+//-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    {
+//        [[self nextResponder] touchesBegan:touches withEvent:event];
+//    }
+//    [super touchesBegan:touches withEvent:event];
+//}
+//
+//-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//    {
+//        [[self nextResponder] touchesMoved:touches withEvent:event];
+//    }
+//    [super touchesMoved:touches withEvent:event];
+//}
 
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {

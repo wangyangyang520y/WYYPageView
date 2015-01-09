@@ -34,6 +34,8 @@ typedef enum {
 
 typedef enum {
     hidden,
+    h_middle,
+    s_middle,
     show
 }LeftViewState;
 
@@ -76,7 +78,8 @@ typedef enum {
 @property(nonatomic,strong)ColorRgb *commonRgb;
 @property(nonatomic,strong)ColorRgb *selectedRgb;
 
-
+@property(nonatomic,strong)UIView *navigationView;
+@property(nonatomic,strong)UILabel *navigationTitle;
 
 @property(nonatomic,strong)ContentScrollView *pageMenueView;
 @property(nonatomic,strong)ContentScrollView *pageContentScrollView;
