@@ -95,6 +95,10 @@
 
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+    if(gestureRecognizer.state == UIGestureRecognizerStateEnded){
+        [ContentScrollView setIsCanReceiveGesture:YES];
+    }
+    NSLog(@"gesture---state:%ld",gestureRecognizer.state);
     return NO;
 }
 

@@ -244,7 +244,6 @@
                 self.leftViewState = hidden;
                 return;
             }
-        
         if (fabsf(v_x)>1000) {
             
             CGPoint v = [gesture velocityInView:gesture.view];
@@ -252,17 +251,17 @@
 //            float slideMult = magnitude / 1000;
 //            NSLog(@"magnitude: %f, slideMult: %f", magnitude, slideMult);
 //            NSLog(@"magnitude: %f", magnitude);
-            float duration;
+            float duration = 0.0;
             if(v_x > 0){
                 duration  = fabsf(self.leftView.frame.origin.x)/(magnitude/2);
             }
             
-            if (duration<0) {
+            if (v_x<0) {
                 duration = (self.leftView.frame.origin.x+leftViewWidth)/(magnitude/2);
             }
             
 //            NSLog(@"duration: %f", duration);
-            
+//            NSLog(@"v_x: %f", v_x);
             [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 self.leftView.frame = CGRectMake(v_x>0?0:-leftViewWidth, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
                 self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:v_x>0?coverAlpha:0];
@@ -669,7 +668,7 @@
         _leftViewState = leftViewState;
         self.pageContentScrollView.scrollEnabled = NO;
     }
-    NSLog(@"scrollview status:%d",self.pageContentScrollView.scrollEnabled);
+//    NSLog(@"scrollview status:%d",self.pageContentScrollView.scrollEnabled);
 }
 
 
