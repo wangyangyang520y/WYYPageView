@@ -9,8 +9,13 @@
 #import "ContentScrollView.h"
 #import <objc/runtime.h>
 
-
+static BOOL isCanReceiveGesture = YES;
 @implementation ContentScrollView
+
++(void)setIsCanReceiveGesture:(BOOL)b
+{
+    isCanReceiveGesture = b;
+}
 
 -(instancetype)initWithFrame:(CGRect)frame
 {
@@ -55,7 +60,7 @@
 //    NSLog(@"gestureRecognizer.className:%@",[NSString stringWithUTF8String:object_getClassName(gestureRecognizer)]);
 //    NSLog(@"otherGestureRecognizer.className:%@",[NSString stringWithUTF8String:object_getClassName(otherGestureRecognizer)]);
 //    NSLog(@"otherGestureRecognizer.view.className:%@",[NSString stringWithUTF8String:object_getClassName(otherGestureRecognizer.view)]);
-    if (self.pageLocation == firstLocation) {
+    if (self.pageLocation == firstLocation && isCanReceiveGesture) {
         return YES;
     }
     return NO;

@@ -173,6 +173,9 @@
 
 -(void)nLeftPan:(UIPanGestureRecognizer *)gesture
 {
+    if (self.leftViewState == wait_hidden) {
+        return;
+    }
     
     float v_x = [gesture velocityInView:gesture.view].x;
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStatePossible) {
@@ -209,6 +212,7 @@
     if ((self.leftViewState == hidden || self.leftViewState ==h_middle) ) {
         
         float allXMove = nowPt.x-firstPt.x>leftViewWidth?leftViewWidth:nowPt.x-firstPt.x;
+        allXMove = allXMove<0?0:allXMove;
     
         self.leftView.frame = CGRectMake(newX, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
         self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(allXMove/leftViewWidth)];
@@ -221,6 +225,7 @@
     if ((self.leftViewState == show ||self.leftViewState == s_middle)) {
         
         float allXMove = firstPt.x-nowPt.x>leftViewWidth?leftViewWidth:firstPt.x-nowPt.x;
+        allXMove = allXMove<0?0:allXMove;
         
         self.leftView.frame = CGRectMake(newX, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
         self.coverView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:coverAlpha*(1-allXMove/leftViewWidth)];
@@ -246,7 +251,7 @@
             float magnitude = sqrtf(v.x*v.x + v.y*v.y);
 //            float slideMult = magnitude / 1000;
 //            NSLog(@"magnitude: %f, slideMult: %f", magnitude, slideMult);
-            NSLog(@"magnitude: %f", magnitude);
+//            NSLog(@"magnitude: %f", magnitude);
             float duration;
             if(v_x > 0){
                 duration  = fabsf(self.leftView.frame.origin.x)/(magnitude/2);
@@ -256,7 +261,7 @@
                 duration = (self.leftView.frame.origin.x+leftViewWidth)/(magnitude/2);
             }
             
-            NSLog(@"duration: %f", duration);
+//            NSLog(@"duration: %f", duration);
             
             [UIView animateWithDuration:duration delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
                 self.leftView.frame = CGRectMake(v_x>0?0:-leftViewWidth, 0, self.leftView.frame.size.width, self.leftView.frame.size.height);
@@ -646,6 +651,11 @@
 
 -(void)setLeftViewState:(LeftViewState)leftViewState
 {
+    if (leftViewState == wait_hidden) {
+        _leftViewState = leftViewState;
+        self.pageContentScrollView.scrollEnabled = YES;
+        [self.coverView removeFromSuperview];
+    }
     if (leftViewState==hidden) {
         _leftViewState = leftViewState;
         self.pageContentScrollView.scrollEnabled = YES;
@@ -679,6 +689,9 @@
 {
     
     if ([scrollView isEqual:self.pageContentScrollView]) {
+        if (scrollView.contentOffset.x>0) {
+            self.leftViewState = wait_hidden;
+        }
         float scrollViewWidth = scrollView.frame.size.width;
         if (scrollView.contentOffset.x<0) {
             return;
@@ -713,9 +726,10 @@
 -(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     if ([scrollView isEqual:self.pageContentScrollView]) {
+        if (scrollView.contentOffset.x == 0.0) {
+            self.leftViewState = hidden;
+        }
         [self changePageMenueViewContentOffset];
-    }
-    if ([scrollView isEqual:self.pageContentScrollView]) {
         if([self.pageViewDelegate respondsToSelector:@selector(pageViewLoadContentView)]) {
             [self.pageViewDelegate pageViewLoadContentView];
         }

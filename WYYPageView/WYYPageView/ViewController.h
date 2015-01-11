@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "PageView.h"
+#import "PageOneView.h"
 
 @interface ViewController : UIViewController<PageViewDelegate>
 
 @property(nonatomic,strong) PageView *pageView;
+@property(nonatomic,strong) PageOneView *oneView;
+@property(nonatomic,strong) PageOneView *twoView;
 
 @end
 

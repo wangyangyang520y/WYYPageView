@@ -53,12 +53,29 @@
     
     UIView *view = self.pageView.pageContents[(int)index];
     
-    //自定义每个page的view
-    if ((int)index%2==0) {
-        view.backgroundColor = [UIColor redColor];
-    }else{
-        view.backgroundColor = [UIColor yellowColor];
+    switch ((int)index) {
+        case 0:
+            if (!self.oneView) {
+                self.oneView = [[PageOneView alloc] initWithFrame:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height)];
+                [view addSubview:self.oneView];
+            }
+            break;
+         case 1:
+            if (!self.twoView) {
+                self.twoView = [[PageOneView alloc] initWithFrame:CGRectMake(0, 0, view.frame.size.width, view.frame.size.height)];
+                [view addSubview:self.twoView];
+            }
+            break;
+            
+        default:
+            if ((int)index%2==0) {
+                view.backgroundColor = [UIColor redColor];
+            }else{
+                view.backgroundColor = [UIColor yellowColor];
+            }
+            break;
     }
+    
 }
 
 - (void)didReceiveMemoryWarning {

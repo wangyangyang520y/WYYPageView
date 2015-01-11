@@ -19,5 +19,6 @@ typedef enum {
 @interface ContentScrollView : UIScrollView<UIGestureRecognizerDelegate>
 
 @property(nonatomic,assign)PageLocation pageLocation;
++(void)setIsCanReceiveGesture:(BOOL)b;
 
 @end

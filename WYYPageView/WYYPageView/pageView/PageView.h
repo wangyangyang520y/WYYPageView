@@ -33,6 +33,7 @@ typedef enum {
 }PageViewState;
 
 typedef enum {
+    wait_hidden,
     hidden,
     h_middle,
     s_middle,
